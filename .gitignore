@@ -1,0 +1,7 @@
+node_modules/
+.wwebjs_auth/
+wwebjs_temp_session*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.env
