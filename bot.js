@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const { MongoStore } = require('wwebjs-mongo');
 
 let client = null;
+let latestQR = null;
 
 async function initializeBot() {
     console.log('Initializing WhatsApp bot with MongoDB RemoteAuth...');
@@ -35,11 +36,13 @@ async function initializeBot() {
 
     client.on('qr', (qr) => {
         console.log('QR RECEIVED. Scan the code below with your WhatsApp!');
+        latestQR = qr;
         qrcode.generate(qr, { small: true });
     });
 
     client.on('ready', () => {
         console.log('WhatsApp Client is secretly ready!');
+        latestQR = 'CONNECTED';
     });
     
     client.on('remote_session_saved', () => {
@@ -89,8 +92,13 @@ async function sendMessageToGroups(groups, textMessage, mediaPath, sendImage) {
     }
 }
 
+function getLatestQR() {
+    return latestQR;
+}
+
 module.exports = {
     client,
     initializeBot,
-    sendMessageToGroups
+    sendMessageToGroups,
+    getLatestQR
 };

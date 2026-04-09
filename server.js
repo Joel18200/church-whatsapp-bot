@@ -75,6 +75,42 @@ function startServer(reloadScheduler) {
         res.json({ success: true });
     });
 
+    // Add visual QR endpoint
+    app.get('/qr', (req, res) => {
+        const { getLatestQR } = require('./bot');
+        const qrData = getLatestQR();
+        
+        if (!qrData) {
+            return res.send(`<h2 style="font-family:sans-serif; text-align:center; margin-top:20vh;">Bot is spinning up... Please wait a few seconds and refresh.</h2>`);
+        }
+        
+        if (qrData === 'CONNECTED') {
+             return res.send(`<h2 style="font-family:sans-serif; text-align:center; margin-top:20vh; color:green;">Successfully Linked! Close this window.</h2>`);
+        }
+
+        const html = `
+        <html>
+            <head>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            </head>
+            <body style="display:flex; justify-content:center; align-items:center; height:100vh; background:#f0f0f0; flex-direction:column; margin:0;">
+                <h1 style="font-family:sans-serif; margin-bottom:20px;">Scan to Link WhatsApp</h1>
+                <div id="qrcode" style="background:white; padding:20px; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.1);"></div>
+                <script>
+                    new QRCode(document.getElementById("qrcode"), {
+                        text: "${qrData}",
+                        width: 300,
+                        height: 300
+                    });
+                    setTimeout(() => location.reload(), 15000);
+                </script>
+            </body>
+        </html>
+        `;
+        res.send(html);
+    });
+
     // Catch-all route to serve the React app
     app.use((req, res) => {
         res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html'));
