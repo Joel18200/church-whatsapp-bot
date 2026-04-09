@@ -1,33 +1,20 @@
-const { Client, RemoteAuth, MessageMedia } = require('whatsapp-web.js');
+const { Client, LocalAuth, MessageMedia } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 const fs = require('fs');
 const path = require('path');
-const mongoose = require('mongoose');
-const { MongoStore } = require('wwebjs-mongo');
 
 let client = null;
 let latestQR = null;
 
 async function initializeBot() {
-    console.log('Initializing WhatsApp bot with MongoDB RemoteAuth...');
-    
-    // Prevent the ENOENT scandir crash by pre-creating the temp Auth directory manually
-    const tempDir = path.join(__dirname, '.wwebjs_auth', 'session-church-bot');
-    const defaultTempDir = path.join(__dirname, '.wwebjs_auth', 'wwebjs_temp_session_church-bot', 'Default');
-    if (!fs.existsSync(defaultTempDir)) {
-        fs.mkdirSync(defaultTempDir, { recursive: true });
-    }
-
-    const store = new MongoStore({ mongoose: mongoose });
+    console.log('Initializing WhatsApp bot with LocalAuth...');
     
     // Wipe poisoned executable path inherited from Docker image
     delete process.env.PUPPETEER_EXECUTABLE_PATH;
 
     client = new Client({
-        authStrategy: new RemoteAuth({
-            clientId: 'church-bot',
-            store: store,
-            backupSyncIntervalMs: 300000
+        authStrategy: new LocalAuth({
+            clientId: 'church-bot'
         }),
         webVersionCache: {
             type: 'local'
@@ -57,10 +44,6 @@ async function initializeBot() {
     client.on('ready', () => {
         console.log('WhatsApp Client is secretly ready!');
         latestQR = 'CONNECTED';
-    });
-    
-    client.on('remote_session_saved', () => {
-        console.log('WhatsApp Session automatically saved to MongoDB Cloud.');
     });
 
     await client.initialize();
