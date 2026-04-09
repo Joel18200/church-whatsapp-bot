@@ -1,7 +1,6 @@
 FROM ghcr.io/puppeteer/puppeteer:latest
 
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
-    PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 
 USER root
 WORKDIR /usr/src/app
