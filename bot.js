@@ -29,6 +29,9 @@ async function initializeBot() {
             store: store,
             backupSyncIntervalMs: 300000
         }),
+        webVersionCache: {
+            type: 'none'
+        },
         puppeteer: {
             args: [
                 '--no-sandbox', 
@@ -37,8 +40,9 @@ async function initializeBot() {
                 '--disable-accelerated-2d-canvas',
                 '--no-first-run',
                 '--no-zygote',
-                '--single-process', // drastically lowers RAM
-                '--disable-gpu'
+                '--disable-gpu',
+                '--disable-software-rasterizer',
+                '--mute-audio'
             ]
         }
     });
