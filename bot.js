@@ -30,7 +30,7 @@ async function initializeBot() {
             backupSyncIntervalMs: 300000
         }),
         webVersionCache: {
-            type: 'none'
+            type: 'local'
         },
         puppeteer: {
             args: [
@@ -40,6 +40,7 @@ async function initializeBot() {
                 '--disable-accelerated-2d-canvas',
                 '--no-first-run',
                 '--no-zygote',
+                '--single-process',
                 '--disable-gpu',
                 '--disable-software-rasterizer',
                 '--mute-audio'
