@@ -28,13 +28,23 @@ async function executeJob() {
     sendMessageToGroups(config.groups, messageText, mediaPath, config.send_image);
 }
 
+function parseCron(timeStr) {
+    if (!timeStr || typeof timeStr !== 'string') return '0 8 * * 0';
+    if (timeStr.split(' ').length >= 5) return timeStr;
+    let parts = timeStr.split(':');
+    let hours = parseInt(parts[0]) || 8;
+    let mins = parts.length > 1 ? parseInt(parts[1]) || 0 : 0;
+    return `${mins} ${hours} * * 0`;
+}
+
 async function startScheduler() {
     const config = await getConfig();
     if (scheduledJob) {
         scheduledJob.stop();
     }
-    console.log(`Scheduling job with cron: ${config.sunday_time}`);
-    scheduledJob = cron.schedule(config.sunday_time || '* * * * *', () => {
+    const safeCron = parseCron(config.sunday_time);
+    console.log(`Scheduling job with cron: ${safeCron}`);
+    scheduledJob = cron.schedule(safeCron, () => {
         executeJob();
     });
 }
