@@ -19,6 +19,9 @@ async function initializeBot() {
 
     const store = new MongoStore({ mongoose: mongoose });
     
+    // Wipe poisoned executable path inherited from Docker image
+    delete process.env.PUPPETEER_EXECUTABLE_PATH;
+
     client = new Client({
         authStrategy: new RemoteAuth({
             clientId: 'church-bot',

@@ -1,7 +1,5 @@
 FROM ghcr.io/puppeteer/puppeteer:latest
 
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-
 USER root
 WORKDIR /usr/src/app
 RUN chown -R pptruser:pptruser /usr/src/app
@@ -9,7 +7,7 @@ RUN chown -R pptruser:pptruser /usr/src/app
 USER pptruser
 
 COPY --chown=pptruser:pptruser package*.json ./
-RUN npm ci
+RUN npm install
 
 COPY --chown=pptruser:pptruser . .
 
