@@ -3,12 +3,16 @@ FROM ghcr.io/puppeteer/puppeteer:latest
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
 
+USER root
 WORKDIR /usr/src/app
+RUN chown -R pptruser:pptruser /usr/src/app
 
-COPY package*.json ./
+USER pptruser
+
+COPY --chown=pptruser:pptruser package*.json ./
 RUN npm ci
 
-COPY . .
+COPY --chown=pptruser:pptruser . .
 
 WORKDIR /usr/src/app/frontend
 RUN npm install
